@@ -150,7 +150,7 @@ suite(function (env) {
 
     // We'll add a test with a description saying the page "loads existing invitations".
     // We'll set up the test in another asynchronous function.
-    it('loads existing invitations', async function () {
+    it('loads existing invitations - implicit wait', async function () {
       await driver.manage().setTimeouts({implicit: 3000});
       // We'll call our driver object's findElements() method -- which returns 
       // an array of elements. Then we'll pass findElements() the invitees locator
@@ -165,6 +165,31 @@ suite(function (env) {
       // will get resolved using "await".
       let text = await invitees[1].getText();
       // Finally, we can assert the element text includes the string "Craig Dennis"
+      assert(text.includes("Craig Dennis"));
+    });
+
+    it('loads existing invitations - with explicit wait', async function () {
+      // Instead of looking for a particular invitee list item, 
+      // we can find the whole invited list and ensure it containst he name of the invitee
+      // we're looking for. This element should get found as soon as the page loads bc it's present
+      // before the AJAX request completes.
+      let list = await driver.findElement(page.locators.invitedList);
+      // Now we can wait for that AJAX call. We'll do that with an explicit 
+      // wait. We make a call to the driver.wait() method.
+      // We need to give the wait() method the conditions that will cause it to stop waiting.
+      // At the top of this file, we require the "until" object. That object
+      // has a method called elementLocated()
+      // that will stop the wait as soon as the specified locator is present in the document.
+      // So we'll have it look for our "invitees" locator,
+      // which will only be present after the AJAX request completes successfully.
+      await driver.wait(
+        until.elementLocated(page.locators.invitees)
+      );
+      // Once the explicit wait is resolved, we can be confident our invitees
+      // have been loaded into the page. If we get all the text from our list
+      // element, it should include the name of the invitee we're looking for.
+      let text = await list.getText();
+      // We end out test by asserting that the text includes the name.
       assert(text.includes("Craig Dennis"));
     });
     
