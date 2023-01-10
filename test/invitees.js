@@ -3,6 +3,8 @@ const {Browser, By, Key, until} = require("selenium-webdriver");
 const {suite} = require("selenium-webdriver/testing");
 // assert library lets us assert that tests are what they're supposed to be
 const assert = require("assert");
+// const { describe, it } = require("node:test");
+// const { markAsUntransferable } = require("worker_threads");
 // const {describe, it} = require("node:test");
 
 // We set up this sample app on a public web server for your convenience.
@@ -77,6 +79,44 @@ suite(function (env) {
       // Now we can check the list of elements to ensure it's not empty.
       assert(elements.length > 0);
       // Finally, we can tell the driver to close the browser.
+      driver.quit();
+    });
+  });
+});
+
+suite(function (env) {
+  describe('RSVP site 3 - before and after keywords', async function () {
+    // Move variable definition here so it remains in scope
+    let driver;
+
+    // Call before() and pass it a callback function that will be called before each test.
+    // We make our callback function asynchronous so we can await within it.
+    before(async function() {
+      // Move driver building here so it happens before each test
+      driver = env.builder().build();
+      // Need to get the page before each test too
+      await driver.get(url);
+    });
+
+    // This test (and any others defined within the describe() callback) will be run after
+    // before() callback, and before the after() callback.
+    it('has invitee list - 3', async function () {
+      // These lines are specific to this test, so we leave them here.
+      let elements = await driver.findElements(By.id('invitedList'));
+      assert(elements.length > 0);
+    });
+
+    // The setup code in the before() callback and the teardone code in the after()
+    // callback are run before each test, so we can remove the duplicated code from this test too.
+    it('has registration form - 3', async function () {
+      // We leave only the code that's specific to this particular test.
+      let elements = await driver.findElements(By.id('registrar'));
+      assert(elements.length > 0);
+    });
+
+    // Call after() and pass it another callback function that will be called after each test.
+    after(async function() {
+      // Move code to close browser here, because it needs to be run after each test.
       driver.quit();
     });
   });
