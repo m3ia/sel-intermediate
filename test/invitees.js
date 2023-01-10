@@ -148,6 +148,26 @@ suite(function (env) {
       assert(elements.length > 0);
     });
 
+    // We'll add a test with a description saying the page "loads existing invitations".
+    // We'll set up the test in another asynchronous function.
+    it('loads existing invitations', async function () {
+      await driver.manage().setTimeouts({implicit: 3000});
+      // We'll call our driver object's findElements() method -- which returns 
+      // an array of elements. Then we'll pass findElements() the invitees locator
+      // from our page object, which is set up to find all the "li" elements inside the element
+      // with an ID of "invited List". findElements() returns a promise --
+      // so we use the "await" keyword to wait for the promise to resolve and then store the
+      // resulting array in the "invitees" variable.
+      let invitees = await driver.findElements(page.locators.invitees);
+      // Now we need to test whether the invitees list loaded correctly. Each element
+      // contains the invitee's name. We can access the second invitee elements,
+      // get its text using the getText() method. This returns a promise, which
+      // will get resolved using "await".
+      let text = await invitees[1].getText();
+      // Finally, we can assert the element text includes the string "Craig Dennis"
+      assert(text.includes("Craig Dennis"));
+    });
+    
     after(async function () {
       driver.quit();
     });

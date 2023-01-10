@@ -20,6 +20,7 @@ class RsvpPage {
       // Our second tests uses this locator to find the form to register invitees.
       // We'll move that here, too.
       registrationForm: By.id("registrar"),
+      invitees: By.css("#invitedList li"),
     };
   }
   // This method will load the page. It will use whatever driver object we pass into the constructor.
