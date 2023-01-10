@@ -3,9 +3,8 @@ const {Browser, By, Key, until} = require("selenium-webdriver");
 const {suite} = require("selenium-webdriver/testing");
 // assert library lets us assert that tests are what they're supposed to be
 const assert = require("assert");
-// const { describe, it } = require("node:test");
-// const { markAsUntransferable } = require("worker_threads");
-// const {describe, it} = require("node:test");
+// Load the RsvpPage class
+const RsvpPage = require("../pages/rsvp.js");
 
 // We set up this sample app on a public web server for your convenience.
 // But when you're testing your own apps, you'll probably want to install it on the same
@@ -117,6 +116,39 @@ suite(function (env) {
     // Call after() and pass it another callback function that will be called after each test.
     after(async function() {
       // Move code to close browser here, because it needs to be run after each test.
+      driver.quit();
+    });
+  });
+});
+
+suite(function (env) {
+  describe("RSVP site - 4 w/ Page Object", async function () {
+    let driver;
+    // Define a variable to hold the page object here so it stays in scope in all tests
+    let page;
+
+    before(async function () {
+      driver = await env.builder().build();
+      // Create a new page object that will use our driver object.
+      // Store it in the page variable.
+      page = new RsvpPage(driver);
+      // Instead of calling driver.get() ourselves, we'll let the page object load the page for us
+      await page.open();
+    });
+
+    it("has invitee list", async function () {
+      // Use the locator from the page object instead.
+      let elements = await driver.findElements(page.locators.invitedList);
+      assert(elements.length > 0);
+    });
+
+    it("has registration form", async function () {
+      // Use the locator from the page object instead.
+      let elements = await driver.findElements(page.locators.registrationForm);
+      assert(elements.length > 0);
+    });
+
+    after(async function () {
       driver.quit();
     });
   });
